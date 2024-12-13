@@ -15,13 +15,15 @@ jobs:
       - name: Ping website
         id: ping
         run: |
-          RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" turtle-hot-completely.ngrok-free.app)
-          if [ "$RESPONSE" -ne 200 ]; then
-            echo "Website is down."
-            echo "status=down" >> $GITHUB_ENV
-          else
-            echo "Website is up."
+          RESPONSE=$(curl -s turtle-hot-completely.ngrok-free.app/alive)
+          
+          if echo "$RESPONSE" | grep -q '<div[^>]*id="alive"'; then
+            echo "The <div id='alive'> exists."
             echo "status=up" >> $GITHUB_ENV
+          else
+            echo "The <div id='alive'> does not exist."
+            echo "status=down" >> $GITHUB_ENV
+          fi
 
       - name: Send LINE message if down
         if: env.status == 'down'
