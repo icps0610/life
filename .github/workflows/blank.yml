@@ -1,4 +1,4 @@
-name: Website Ping Check
+name: alive
 
 on:
   schedule:
