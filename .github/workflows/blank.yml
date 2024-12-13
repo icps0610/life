@@ -36,7 +36,7 @@ jobs:
             "messages": [
               {
                 "type": "text",
-                "text": "The website https://example.com is not responding."
+                "text": "浩子的主機沒有回應"
               }
             ]
           }'
