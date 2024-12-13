@@ -2,7 +2,7 @@ name: Website Ping Check
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天午夜 0 點執行一次
+    - cron: '0 0 * * *' # 每天 00:00 UTC
   workflow_dispatch: # 可手動觸發
 
 jobs:
@@ -23,15 +23,18 @@ jobs:
             echo "Website is up."
             echo "status=up" >> $GITHUB_ENV
 
-      - name: Send email if down
+      - name: Send LINE message if down
         if: env.status == 'down'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.GMAIL_USERNAME }}
-          password: ${{ secrets.GMAIL_APP_PASSWORD }}
-          subject: "Website Down Alert"
-          body: "The website https://example.com is not responding."
-          to: recipient@example.com
-          from: ${{ secrets.GMAIL_USERNAME }}
+        run: |
+          curl -X POST https://api.line.me/v2/bot/message/push \
+          -H "Authorization: Bearer ${{ secrets.LINE_ACCESS_TOKEN }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "to": "YOUR_USER_ID",
+            "messages": [
+              {
+                "type": "text",
+                "text": "The website https://example.com is not responding."
+              }
+            ]
+          }'
