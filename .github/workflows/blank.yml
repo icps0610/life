@@ -15,7 +15,7 @@ jobs:
       - name: Ping website
         id: ping
         run: |
-          RESPONSE=$(curl -s https://turtle-hot-completely.ngrok-free.app/alive)
+          RESPONSE=$(curl -s https://turtle-hot-completely.ngrok-free.app2/alive)
           
           if echo "$RESPONSE" | grep -q '<div[^>]*id="alive"'; then
             echo "The <div id='alive'> exists."
