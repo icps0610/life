@@ -1,0 +1,40 @@
+name: Website Ping Check
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # 每天 00:00 UTC
+  workflow_dispatch: # 可手動觸發
+
+jobs:
+  ping-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Ping website
+        id: ping
+        run: |
+          RESPONSE=$(curl -o /dev/null -s -w "%{http_code}" turtle-hot-completely.ngrok-free.app)
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Website is down."
+            echo "status=down" >> $GITHUB_ENV
+          else
+            echo "Website is up."
+            echo "status=up" >> $GITHUB_ENV
+
+      - name: Send LINE message if down
+        if: env.status == 'down'
+        run: |
+          curl -X POST https://api.line.me/v2/bot/message/push \
+          -H "Authorization: Bearer ${{ secrets.LineMsgToken }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "to": " ${{ secrets.LineMsgMeID }}",
+            "messages": [
+              {
+                "type": "text",
+                "text": "The website https://example.com is not responding."
+              }
+            ]
+          }'
