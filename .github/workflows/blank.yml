@@ -2,7 +2,7 @@ name: Website Ping Check
 
 on:
   schedule:
-    - cron: '0 0 * * *' # 每天 00:00 UTC
+    - cron: '0 19 * * *' # 每天 00:00 UTC
   workflow_dispatch: # 可手動觸發
 
 jobs:
